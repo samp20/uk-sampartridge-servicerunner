@@ -1,1 +1,1 @@
-from .service import Service, PollingService
+from .service import Service, PollingService, task

@@ -2,6 +2,14 @@ import logging
 import asyncio
 from functools import wraps
 
+def task(can_cancel):
+    def decorator(func):
+        @wraps(func)
+        def func_wrapper(self, *args, **kwargs):
+            return self.new_task(func(self, *args, **kwargs), can_cancel=can_cancel)
+        return func_wrapper
+    return decorator
+
 class Service:
     def __init__(self, runner, name, config):
         self.log = logging.getLogger(name)
@@ -112,12 +120,3 @@ class PollingService(Service):
     @task(can_cancel=False)
     async def do_poll(self):
         pass
-
-
-def task(can_cancel):
-    def decorator(func):
-        @wraps(func)
-        def func_wrapper(self, *args, **kwargs):
-            return self.register_task(func(self, *args, **kwargs), can_cancel=can_cancel)
-        return func_wrapper
-    return decorator
