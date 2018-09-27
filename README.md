@@ -6,6 +6,11 @@ An asynchronous service runner written for python >=3.6
 Version history
 ---------------
 
+
+### 0.2.0
+
+* Added systemd notify and watchdog support
+
 ### 0.1.2
 
 * Fixed task decorator
