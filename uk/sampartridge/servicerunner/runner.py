@@ -1,5 +1,6 @@
 import importlib
 import logging
+from .notify import SystemdNotify
 
 class Runner:
     def __init__(self, config):
@@ -7,6 +8,8 @@ class Runner:
         self.config = config
 
     def load_services(self):
+        self.systemd = SystemdNotify(self, 'systemd', {})
+    
         for key, value in self.config['Services'].items():
             if value == '1':
                 self.get_service(key)
@@ -23,9 +26,13 @@ class Runner:
             return service
 
     async def start(self, loop):
-        for name, service in self.services.items():
+        for service in self.services.values():
             await service.start(loop)
 
+        await self.systemd.start(loop)
+
     async def stop(self):
-        for name, service in self.services.items():
+        await self.systemd.stop()
+
+        for service in self.services.values():
             await service.stop()
