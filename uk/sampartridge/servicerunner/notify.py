@@ -52,12 +52,12 @@ class SystemdNotify(PollingService):
             self.log.warn("Could not connect to systemd socket: %s", e)
 
     async def disconnect(self):
-        if self.transport:
+        if self.transport is not None:
             self.transport.close()
             await self.disconnect_future
 
     def send(self, data):
-        if self.transport:
+        if self.transport is not None:
             self.log.debug("Sending to systemd: %s", data)
             self.transport.sendto(data)
 
