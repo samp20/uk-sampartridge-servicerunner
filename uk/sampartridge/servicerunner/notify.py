@@ -37,13 +37,15 @@ class SystemdNotify(PollingService):
             self.send('WATCHDOG=1')
 
     async def connect(self):
-        try:
+        try:            
             if self.transport is None and self.addr is not None:
                 self.disconnect_future = asyncio.Future()
                 loop = asyncio.get_event_loop()
-                self.log.info("Connecting to systemd socket %s", self.addr)
+                self.log.info("Connecting to systemd socket %s", self.addr)            
                 #pylint: disable=E1101
                 await loop.create_datagram_endpoint(lambda: self, remote_addr=self.addr, family=socket.AF_UNIX)
+            else:
+                self.log.debug("Unable to connect: %s, %s", self.transport, self.addr)
         except AttributeError as e:
             self.log.warn("Could not connect to systemd socket: %s", e)
 
