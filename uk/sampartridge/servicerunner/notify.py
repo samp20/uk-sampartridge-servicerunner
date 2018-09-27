@@ -44,8 +44,8 @@ class SystemdNotify(PollingService):
                 self.log.info("Connecting to systemd socket %s", self.addr)
                 #pylint: disable=E1101
                 await loop.create_datagram_endpoint(lambda: self, remote_addr=self.addr, family=socket.AF_UNIX)
-        except AttributeError:
-            pass
+        except AttributeError as e:
+            self.log.warn("Could not connect to systemd socket: %s", e)
 
     async def disconnect(self):
         if self.transport:
