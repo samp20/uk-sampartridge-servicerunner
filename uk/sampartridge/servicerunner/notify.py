@@ -11,9 +11,9 @@ class SystemdNotify(PollingService):
     def do_init(self, runner, name, config):
         self.enabled = config.getboolean('enabled', fallback=False)
         self.watchdog = config.getboolean('watchdog', fallback=False)
-        try:
+
         self.addr = os.getenv('NOTIFY_SOCKET')
-        if self.addr is not None and self.addr[0] == '@':
+        if self.addr and self.addr[0] == '@':
             self.addr = '\0' + self.addr[1:]
         
         self.transport = None
