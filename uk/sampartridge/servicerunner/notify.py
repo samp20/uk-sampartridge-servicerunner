@@ -62,7 +62,7 @@ class SystemdNotify(PollingService):
             self.transport.sendto(data)
 
     def connection_made(self, transport):
-        self.transpoprt = transport
+        self.transport = transport
         self.connect_future.set_result(None)
 
     def datagram_received(self, data, addr):
