@@ -59,7 +59,7 @@ class SystemdNotify(PollingService):
     def send(self, data):
         if self.transport is not None:
             self.log.debug("Sending to systemd: %s", data)
-            self.transport.sendto(data)
+            self.transport.sendto(data.encode())
 
     def connection_made(self, transport):
         self.transport = transport
