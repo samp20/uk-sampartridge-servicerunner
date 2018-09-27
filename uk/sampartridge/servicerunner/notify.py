@@ -43,7 +43,9 @@ class SystemdNotify(PollingService):
                 loop = asyncio.get_event_loop()
                 self.log.info("Connecting to systemd socket %s", self.addr)            
                 #pylint: disable=E1101
+                self.connect_future = asyncio.Future()
                 await loop.create_datagram_endpoint(lambda: self, remote_addr=self.addr, family=socket.AF_UNIX)
+                await self.connect_future
             else:
                 self.log.debug("Unable to connect: %s, %s", self.transport, self.addr)
         except AttributeError as e:
@@ -61,6 +63,7 @@ class SystemdNotify(PollingService):
 
     def connection_made(self, transport):
         self.transpoprt = transport
+        self.connect_future.set_result(None)
 
     def datagram_received(self, data, addr):
         pass
