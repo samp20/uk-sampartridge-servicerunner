@@ -8,7 +8,9 @@ class Runner:
         self.config = config
 
     def load_services(self):
-        self.systemd = SystemdNotify(self, 'systemd', {})
+        if not 'systemd' in self.config:
+            self.config['systemd'] = {}
+        self.systemd = SystemdNotify(self, 'systemd', self.config['systemd'])
     
         for key, value in self.config['Services'].items():
             if value == '1':
