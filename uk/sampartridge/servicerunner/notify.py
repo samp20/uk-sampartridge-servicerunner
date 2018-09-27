@@ -19,6 +19,7 @@ class SystemdNotify(PollingService):
         self.transport = None
 
     async def do_start(self):
+        self.log.debug("Systemd service enabled? %s", self.enabled)
         if self.enabled:
             await self.connect()
             self.send('READY=1')
