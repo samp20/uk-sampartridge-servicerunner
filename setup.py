@@ -5,7 +5,7 @@ with open('README.md', 'r') as fh:
 
 setup(
     name="uk-sampartridge-servicerunner",
-    version="0.2.0",
+    version="0.2.1",
     author="Sam Partridge",
     description="A microservice framework",
     long_description=long_description,
