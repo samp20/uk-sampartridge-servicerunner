@@ -8,7 +8,7 @@ class Runner:
     def __init__(self, config):
         self.services = {}
         self.config = config
-        self.enable_systemd = self.config.getboolean('DEFAULT', 'systemd', fallback=False)
+        self.enable_systemd = self.config.getboolean('General', 'systemd', fallback=False)
         self.systemd_sock = None
 
     def load_services(self):
