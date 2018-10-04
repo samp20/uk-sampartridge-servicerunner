@@ -1,19 +1,20 @@
 import importlib
 import logging
-from .notify import SystemdNotify
+from .datagram import create_datagram_endpoint
+import socket
+import os
 
 class Runner:
     def __init__(self, config):
         self.services = {}
         self.config = config
+        self.enable_systemd = self.config.getboolean('DEFAULT', 'systemd', fallback=False)
+        self.systemd_sock = None
 
     def load_services(self):
-        if not 'systemd' in self.config:
-            self.config['systemd'] = {}
-        self.systemd = SystemdNotify(self, 'systemd', self.config['systemd'])
-    
-        for key, value in self.config['Services'].items():
-            if value == '1':
+        services = self.config['Services']
+        for key in services:
+            if services.getboolean(key):
                 self.get_service(key)
 
     def get_service(self, name):
@@ -31,10 +32,30 @@ class Runner:
         for service in self.services.values():
             await service.start(loop)
 
-        await self.systemd.start(loop)
+        if self.enable_systemd:
+            await self.start_systemd()
 
     async def stop(self):
-        await self.systemd.stop()
+        await self.stop_systemd()
 
         for service in self.services.values():
             await service.stop()
+
+    async def start_systemd(self):
+        notify_addr = os.getenv('NOTIFY_SOCKET')
+        if notify_addr is None:
+            return
+        if notify_addr[0] == '@':
+            notify_addr = '\0' + notify_addr[1:]
+        try:
+            #pylint: disable=E1101
+            self.systemd_sock = await create_datagram_endpoint(remote_addr=notify_addr, family=socket.AF_UNIX)
+        except AttributeError:
+            return
+        self.systemd_sock.send(b'READY=1')
+
+    async def stop_systemd(self):
+        if self.systemd_sock:
+            self.systemd_sock.send(b'STOPPING=1')
+            self.systemd_sock.close()
+            await self.systemd_sock.wait_closed()
