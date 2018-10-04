@@ -7,9 +7,9 @@ Version history
 ---------------
 
 
-### 0.2.1
+### 0.2.2
 
-* Added systemd notify and watchdog support
+* Added systemd notify support
 
 ### 0.1.2
 
