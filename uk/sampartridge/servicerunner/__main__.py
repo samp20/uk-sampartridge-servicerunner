@@ -31,7 +31,7 @@ def main():
     loop.close()
 
 def load_config(parser, path):
-    with open(path, 'rb') as f:
+    with open(path, 'r') as f:
         parser.read_file(f)
         incs = parser.get('General', 'includes', fallback=None)
         if incs is not None:
