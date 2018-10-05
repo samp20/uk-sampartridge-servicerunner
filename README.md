@@ -6,6 +6,9 @@ An asynchronous service runner written for python >=3.6
 Version history
 ---------------
 
+### 0.3.0
+
+* Add config includes
 
 ### 0.2.2
 
